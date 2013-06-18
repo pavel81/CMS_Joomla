@@ -1,0 +1,4 @@
+
+project : LaiThai_eCommerce_Edition_VM_1.1.8_Joomla_1.5.23 
+By : Supachai Teasakul 
+Web : http://joomlacode.org

@@ -1,0 +1,253 @@
+VirtueMart_1.1.8 eCommerce Bundle Joomla! 1.5.23 Log File
+
+'PHPSHOP_PRODUCT_FORM_WEIGHT_UOM_DEFAULT' => 'ปอนด์',  เปลี่ยนเป็น pounds แต่ผมเปลี่ยนเป็น KG
+
+-- Front End Set Display For Display Thai Dynamic Page Title --
+	administrator\components\com_virtuemart\html\shop.ask.php
+	line: 26
+	$subject = substr( urldecode( vmGet( $_REQUEST, 'subject')), 0, 150 );
+	to
+	$subject = JString::substr( urldecode( vmGet( $_REQUEST, 'subject')), 0, 150 );
+
+-- Front End Set Dynamic Page Title --
+	administrator\components\com_virtuemart\html\shop.ask.php
+	line: 54 Change from 60 to 600 for thai title product.
+$pagetitle = $VM_LANG->_('ENQUIRY').' - '.substr($db_product->f('product_name'), 0, 60 );
+to
+$pagetitle = $VM_LANG->_('ENQUIRY').' - '.JString::substr($db_product->f('product_name'), 0, 260 );
+
+	administrator\components\com_virtuemart\html\shop.product_details.php
+	line: 230 - 232
+	$page_title = mb_substr($product_name, 0, 64, vmGetCharset() );
+} else {
+	$page_title = substr($product_name, 0, 64 );
+	to
+	$page_title = mb_substr($product_name, 0, 264, vmGetCharset() );
+} else {
+	$page_title = JString::substr($product_name, 0, 264 );
+
+-- Front End Display State Name --
+	components\com_virtuemart\themes\default\templates\checkout\customer_info.tpl.php
+	line: 55 Change state, state_2_code to state_name
+
+	components\com_virtuemart\themes\default\templates\checkout\list_shipto_addresses.tpl.php
+	line: 65 Change state, state_2_code to state_name
+
+-- Front End Change DB Query Display Country Name --
+	components\com_virtuemart\themes\default\templates\checkout\get_final_confirmation.tpl.php
+	line: 38 to
+	$q1 = "SELECT * FROM #__{vm}_country WHERE country_3_code='".$db->f("country")."'";
+	$dbs->query($q1);
+	$country_id = $dbs->f("country_id");
+	$q2 = "SELECT * FROM #__{vm}_state WHERE country_id=".$country_id." AND state_2_code='".$db->f("state")."'";
+	$dbs->query($q2);
+	$state_name = $dbs->f("state_name");
+	$q3 = "SELECT * FROM #__{vm}_country WHERE country_id='".$country_id."'";
+	$dbs->query($q3);
+	$country_name = $dbs->f("country_name");
+
+-- Front End Change Display Country Name --
+	components\com_virtuemart\themes\default\templates\checkout\get_final_confirmation.tpl.php
+	line: 52 Change state, 'country' => $db->f('country') to 'country' => $country_name
+
+-- Front End Set html_entity_decode for thai URL --
+	components\com_virtuemart\themes\default\templates\common\price.tpl.php
+	line: 7
+	$link = $sess->url( $_SERVER['PHP_SELF'].'?page=shop.ask&amp;product_id='.$product_id.'&amp;subject='. urlencode( $VM_LANG->_('PHPSHOP_PRODUCT_CALL').": ".html_entity_decode($product_name."") ) );
+
+-- Front End Display Comment --
+	components\com_virtuemart\themes\default\templates\common\reviews.tpl.php
+	line: 27 Remove 'wordwrap' function.
+
+-- Front End Change font-style: italic; to font-style: normal; --
+	components\com_virtuemart\themes\default\templates\product_details\flypage-ask.tpl.php
+	line: 45, 63
+	components\com_virtuemart\themes\default\templates\product_details\flypage.tpl.php
+	line: 48
+	components\com_virtuemart\themes\default\templates\product_details\flypage_images.tpl.php
+	line: 49
+	components\com_virtuemart\themes\default\templates\product_details\flypage_new.tpl.php
+	line: 26
+	components\com_virtuemart\themes\default\templates\product_details\garden_flypage.tpl.php
+	line: 41
+
+-- Front End Change float: right; to float: left; -- for support IE7 - IE8
+	components\com_virtuemart\themes\default\templates\product_details\includes\addtocart_form.tpl.php
+	components\com_virtuemart\themes\ja_larix\templates\product_details\includes\addtocart_form.tpl.php
+	line: 30
+
+-- Front End Change width: 74.9%; to width: 70.9%; -- for support IE7 - IE8
+	templates\ja_larix\css\template_css.css
+	line: 817
+		#ja-mainbody #ja-contentwrap
+	line: 827
+		#ja-mainbody-fl #ja-contentwrap
+
+-- Front End Change width: 24.9%; to width: 28.9%; -- for support IE7 - IE8
+	line: 1189
+		#ja-col2
+
+-- Front End Add width: 100%; -- for support IE7 - IE8
+	line: 1002
+		#ja-headerwrap
+
+-- Front End Change right: 10px; to right: 30px; -- for support IE7
+	line: 1239
+		*+html #ja-usertools
+
+-- Front End Add in index.php ...  -- for support IE8
+		<!--[if gte IE 8.0]>
+		<style type="text/css">
+		.clearfix {display: block;}
+		</style>
+		<![endif]-->
+
+--------------------------------------------------------------------------------------------
+-- Back End Config Image Resize --
+	administrator\components\com_virtuemart\virtuemart.cfg.php
+	line: 111 Change to 
+	define('PSHOP_IMG_RESIZE_ENABLE', '1');
+
+--------------------------------------------------------------------------------------------
+-- Add Syntax Store Address Format --
+	installation\sql\mysql\virtuemart.installation.joomla.sql
+	line: 2389
+{storename}\n{address_1}\n{address_2}\n{city}, {zip}
+	to
+{storename}\r\n{address_1}\r\n{address_2}\r\n{city}, {statename} {zip}\r\n{country}
+
+-- Add Thailand Post Shipping Module List --
+	administrator\components\com_virtuemart\classes\shipping\thailandpost.cfg.php
+	administrator\components\com_virtuemart\classes\shipping\thailandpost.ini
+	administrator\components\com_virtuemart\classes\shipping\thailandpost.php
+	administrator\components\com_virtuemart\classes\shipping\thailandpost_ems.cfg.php
+	administrator\components\com_virtuemart\classes\shipping\thailandpost_ems.ini
+	administrator\components\com_virtuemart\classes\shipping\thailandpost_ems.php
+
+-- Add PaySbuy thai payment method --
+	administrator\components\com_virtuemart\paysbuynotify.php
+	administrator\components\com_virtuemart\classes\payment\ps_paysbuy.cfg.php
+	administrator\components\com_virtuemart\classes\payment\ps_paysbuy.php
+
+	administrator\components\com_virtuemart\html\checkout.paysbuy.php
+
+	installation\sql\mysql\virtuemart.installation.joomla.sql
+	line: 1163
+	INSERT INTO `#__vm_payment_method` VALUES (18, 1, 'PaySbuy', 'ps_paysbuy', 5, 0.00, 0, 0.00, 0.00, 0, 'PSB', 'P', 0, 'N', '', '', '');
+
+-- Add thai province installation sql file --
+	installation\sql\mysql\virtuemart.installation.joomla.sql
+	line: 2110 - 2186
+(NULL, 101, 'Zanjan', 'ZAN', 'ZA'),
+(NULL, 209, 'กระบี่', 'กบ', 'กบ'),
+(NULL, 209, 'กรุงเทพมหานคร', 'กทม', 'กท'),
+(NULL, 209, 'กาญจนบุรี', 'กจ', 'กจ'),
+(NULL, 209, 'กาฬสินธุ์', 'กส', 'กส'),
+(NULL, 209, 'กำแพงเพชร', 'กพ', 'กพ'),
+(NULL, 209, 'ขอนแก่น', 'ขก', 'ขก'),
+(NULL, 209, 'จันทบุรี ', 'จบ', 'จบ'),
+(NULL, 209, 'ฉะเชิงเทรา', 'ฉช', 'ฉช'),
+(NULL, 209, 'ชลบุรี ', 'ชบ', 'ชบ'),
+(NULL, 209, 'ชัยนาท', 'ชน', 'ชน'),
+(NULL, 209, 'ชัยภูมิ', 'ชย', 'ชย'),
+(NULL, 209, 'ชุมพร', 'ชพ', 'ชพ'),
+(NULL, 209, 'เชียงราย', 'ชร', 'ชร'),
+(NULL, 209, 'เชียงใหม่', 'ชม', 'ชม'),
+(NULL, 209, 'ตรัง', 'ตง', 'ตง'),
+(NULL, 209, 'ตราด', 'ตร', 'ตร'),
+(NULL, 209, 'ตาก', 'ตก', 'ตก'),
+(NULL, 209, 'นครนายก', 'นย', 'นย'),
+(NULL, 209, 'นครปฐม', 'นฐ', 'นฐ'),
+(NULL, 209, 'นครพนม', 'นพ', 'นพ'),
+(NULL, 209, 'นครราชสีมา', 'นม', 'นม'),
+(NULL, 209, 'นครศรีธรรมราช', 'นศ', 'นศ'),
+(NULL, 209, 'นครสวรรค์', 'นว', 'นว'),
+(NULL, 209, 'นนทบุรี ', 'นบ', 'นบ'),
+(NULL, 209, 'นราธิวาส', 'นธ', 'นธ'),
+(NULL, 209, 'น่าน', 'นน', 'นน'),
+(NULL, 209, 'บุรีรัมย์', 'บร', 'บร'),
+(NULL, 209, 'ปทุมธานี', 'ปท', 'ปท'),
+(NULL, 209, 'ประจวบคีรีขันธ์', 'ปข', 'ปข'),
+(NULL, 209, 'ปราจีนบุรี', 'ปจ', 'ปจ'),
+(NULL, 209, 'ปัตตานี', 'ปน', 'ปน'),
+(NULL, 209, 'พระนครศรีอยุธยา', 'อย', 'อย'),
+(NULL, 209, 'พังงา ', 'พง', 'พง'),
+(NULL, 209, 'พัทลุง', 'พท', 'พท'),
+(NULL, 209, 'พิจิตร', 'พจ', 'พจ'),
+(NULL, 209, 'พิษณุโลก', 'พล', 'พล'),
+(NULL, 209, 'เพชรบุรี', 'พบ', 'พบ'),
+(NULL, 209, 'เพชรบูรณ์ ', 'พช', 'พช'),
+(NULL, 209, 'แพร่ ', 'พร', 'พร'),
+(NULL, 209, 'พะเยา', 'พย', 'พย'),
+(NULL, 209, 'ภูเก็ต', 'ภก', 'ภก'),
+(NULL, 209, 'มหาสารคาม', 'มค', 'มค'),
+(NULL, 209, 'แม่ฮ่องสอน', 'มส', 'มส'),
+(NULL, 209, 'มุกดาหาร', 'มห', 'มห'),
+(NULL, 209, 'ยะลา', 'ยล', 'ยล'),
+(NULL, 209, 'ยโสธร', 'ยส', 'ยส'),
+(NULL, 209, 'ร้อยเอ็ด', 'รอ', 'รอ'),
+(NULL, 209, 'ระนอง', 'รน', 'รน'),
+(NULL, 209, 'ระยอง', 'รย', 'รย'),
+(NULL, 209, 'ราชบุรี', 'รบ', 'รบ'),
+(NULL, 209, 'ลพบุรี', 'ลบ', 'ลบ'),
+(NULL, 209, 'ลำปาง', 'ลป', 'ลป'),
+(NULL, 209, 'ลำพูน', 'ลพ', 'ลพ'),
+(NULL, 209, 'เลย', 'ลย', 'ลย'),
+(NULL, 209, 'ศรีสะเกษ', 'ศก', 'ศก'),
+(NULL, 209, 'สกลนคร', 'สน', 'สน'),
+(NULL, 209, 'สงขลา', 'สข', 'สข'),
+(NULL, 209, 'สตูล', 'สต', 'สต'),
+(NULL, 209, 'สมุทรปราการ', 'สป', 'สป'),
+(NULL, 209, 'สมุทรสงคราม', 'สส', 'สส'),
+(NULL, 209, 'สมุทรสาคร', 'สค', 'สค'),
+(NULL, 209, 'สระบุรี', 'สบ', 'สบ'),
+(NULL, 209, 'สระแก้ว', 'สก', 'สก'),
+(NULL, 209, 'สิงห์บุรี ', 'สห', 'สห'),
+(NULL, 209, 'สุโขทัย', 'สท', 'สท'),
+(NULL, 209, 'สุพรรณบุรี', 'สพ', 'สพ'),
+(NULL, 209, 'สุราษฎร์ธานี', 'สฎ', 'สฎ'),
+(NULL, 209, 'สุรินทร์', 'สร', 'สร'),
+(NULL, 209, 'หนองคาย', 'นค', 'นค'),
+(NULL, 209, 'หนองบัวลำภู', 'นภ', 'นภ'),
+(NULL, 209, 'อ่างทอง', 'อท', 'อท'),
+(NULL, 209, 'อุดรธานี', 'อด', 'อด'),
+(NULL, 209, 'อุตรดิตถ์', 'อต', 'อต'),
+(NULL, 209, 'อุทัยธานี', 'อน', 'อน'),
+(NULL, 209, 'อุบลราชธานี', 'อบ', 'อบ'),
+(NULL, 209, 'อำนาจเจริญ', 'อจ', 'อจ');
+
+-- Add insert thai tax rate --
+	line: 2210 Add
+	INSERT INTO `#__vm_tax_rate` VALUES (3, 1, '-', 'THA', 1218789407, 0.0700);
+
+-- Change product name varchar number installation sql file --
+	installation\sql\mysql\virtuemart.installation.joomla.sql
+	line: 1194
+	`product_name` varchar(64) default NULL,
+	  to
+	`product_name` varchar(255) default NULL,
+
+--------------------------------------------------------------------------------------------
+-- Add css for debug savedCart display --
+	templates\ja_larix\css\ja-vm.css
+	line: 106 - 108
+	#ja-vm-cart div.moduletable a.savedCart {
+		display: none;
+	}
+
+--------------------------------------------------------------------------------------------
+-- Fix TimeStamp +7 Time Zone --
+	administrator\components\com_virtuemart\classes\ps_checkout.php
+	line: 1026
+		$mysqlDatetime = date("Y-m-d G:i:s", $timestamp);
+	to
+		//$mysqlDatetime = date("Y-m-d G:i:s", $timestamp);  //Original
+		$mysqlDatetime = date("Y-m-d G:i:s", $timestamp + ($mosConfig_offset*60*60));  //Custom
+
+--------------------------------------------------------------------------------------------
+-- Add news menu link type frontpage component installation sql file --
+	installation\sql\mysql\joomla.sql
+	line: 515
+	INSERT INTO `#__menu` VALUES (2, 'mainmenu', 'News', 'news', 'index.php?option=com_content&view=frontpage', 'component', 1, 0, 20, 0, 2, 0, '0000-00-00 00:00:00', 0, 0, 0, 3, 'num_leading_articles=1\nnum_intro_articles=4\nnum_columns=2\nnum_links=4\norderby_pri=\norderby_sec=front\nshow_pagination=2\nshow_pagination_results=1\nshow_feed_link=1\nshow_noauth=\nshow_title=\nlink_titles=\nshow_intro=\nshow_section=\nlink_section=\nshow_category=\nlink_category=\nshow_author=\nshow_create_date=\nshow_modify_date=\nshow_item_navigation=\nshow_readmore=\nshow_vote=\nshow_icons=\nshow_pdf_icon=\nshow_print_icon=\nshow_email_icon=\nshow_hits=\nfeed_summary=\npage_title=\nshow_page_title=0\npageclass_sfx=\nmenu_image=-1\nsecure=0\n\n', 0, 0, 0);
+
+--------------------------------------------------------------------------------------------
